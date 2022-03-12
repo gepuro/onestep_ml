@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>ワンステップ機械学習</title>
+    <script type='text/javascript' src='/eel.js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <button @click="getPathToFile">学習対象のエクセルファイルを選択してください</button>
+        <div>機械学習のステータス: {{ml_status}}</div>
+    </div>
+
+</body>
+
+
+</html>
+
+<script>
+    var app = new Vue({
+        el: "#app",
+        data: {
+            target_filepath: null,
+            ml_status: "未実行",
+        },
+        watch: {
+            target_filepath: async function (val) {
+                return await this.run_ml()
+            },
+        },
+        methods: {
+            async getPathToFile() {
+                this.target_filepath = await eel.ask_file()()
+            },
+            async run_ml() {
+                this.ml_status = "実行中"
+                const ml_response = await eel.run_ml(this.target_filepath)();
+                if (ml_response === "true") {
+                    this.ml_status = "完了"
+                } else {
+                    this.ml_status = ml_response
+                }
+            },
+        },
+    })
+</script>
